@@ -374,7 +374,11 @@ function loop() {
 					if (distance < colDistance) {
 						// a ship is contacted!
 						ship.hit = true;
-						ship.speed.x *= -2;
+						ship.speed.x *= -1.1;
+
+						setTimeout(function() {
+							ship.speed.x *= 1.8;
+						}, 150);
 
 						packet.hit = true;
 						packet.speed.x *= 0.3;
