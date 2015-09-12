@@ -15,7 +15,7 @@ html, body, .game-container, .canvas-container {
 
 body {
 	font-family: Arial, sans-serif;
-	background: rgba(80, 100, 255, 0.7);
+	background-color: rgba(80, 100, 255, 0.7);
 
 	color: white;
 }
@@ -44,7 +44,7 @@ a:hover {
 }
 
 canvas {
-	background: #000;
+	background-color: #000;
 }
 
 .menu {
@@ -53,7 +53,7 @@ canvas {
 
     overflow: auto;
 
-    background: rgba(80, 100, 255, 0.7);
+    background-color: rgba(80, 100, 255, 0.7);
 
     top: -100%;
     bottom: 100%;
@@ -81,26 +81,37 @@ canvas {
 .main-button {
 	font-size: 10vh;
 
-	background: rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 0, 0.2);
 }
 
 .main-button:hover {
 	padding: 2px;
 	border-width: 4px;
 
-	background: rgba(0, 0, 0, 0.4);
+	background-color: rgba(0, 0, 0, 0.4);
 }
 
 button {
 	transition: all;
 	transition-duration: 0.2s;
 
-	background: rgba(0, 0, 0, 0.1);
+	background-color: rgba(0, 0, 0, 0.1);
 	border: 2px solid white;
 	padding: 8px;
 	color: inherit;
 }
 
 button:hover {
-	background: rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+.score-list, .info-list {
+	padding-left: 0;
+	padding-right: 0;
+
+	list-style-type: none;
+}
+
+.score-list {
+	text-align: center;
 }
