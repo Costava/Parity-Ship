@@ -228,6 +228,10 @@ Game.prototype.startGame = function() {
     this.fadeBars = [];
 	this.planets = [];
 
+	//check if planets should had shadow
+	this.blurCheckbox = document.querySelector('#planet-blur');
+	this.planetBlur = this.blurCheckbox.checked;
+
 	this.shipSpeedStepUps = [];
 	// ^ array of setTimeouts that will ramp up maxShipSpeed.
 	//   A list of these must be kept so that they can be stopped if
@@ -345,7 +349,7 @@ function loop() {
 		var sideLength = randomInInterval(game.minPlanetLength, game.maxPlanetLength);
 		var color = Color.random(1);
 
-		var mult = 0.3;
+		var mult = 0.25;
 		color.r *= mult;
 		color.g *= mult;
 		color.b *= mult;
@@ -543,7 +547,7 @@ function loop() {
     game.ctx.scale(game.vh, game.vh);
 
 	game.planets.forEach(function(planet, index, planets) {
-		planet.draw(game.ctx);
+		planet.draw(game.ctx, game.planetBlur);
 	});
 
 	game.cleanPackets.forEach(function(packet, index, packets) {
@@ -562,7 +566,8 @@ function loop() {
 
     game.ctx.restore();
 
-    game.currentTime = new Date().getTime();
+    // game.currentTime = new Date().getTime();
+	game.currentTime = game.newTime;
 
 	if (game.looping) {
     	window.requestAnimationFrame(loop);
@@ -801,9 +806,15 @@ function Planet(pos, sideLength, color, speed) {
 	this.speed = speed;
 }
 
-Planet.prototype.draw = function(ctx) {
+Planet.prototype.draw = function(ctx, drawShadow) {
 	ctx.save();
 	ctx.fillStyle = this.color.floored().toString();
+
+	if (drawShadow) {
+		ctx.shadowColor = this.color.floored().toString();
+		ctx.shadowBlur = 4 * this.sideLength;
+	}
+
 	ctx.fillRect(this.pos.x, this.pos.y, this.sideLength, this.sideLength);
 	ctx.restore();
 };

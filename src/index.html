@@ -31,9 +31,11 @@
                     -->
                 </p>
 
-                <ul>
+                <div>Planet Blur (may decrease framerate):<input type="checkbox" id="planet-blur"></div>
+
+                <ul class="info-list">
                     <li>Author: <a href="https://github.com/Costava" target="_blank">Costava</a></li>
-                    <li>Version: 0.2</li>
+                    <li>Version: 0.3</li>
                     <li><a href="https://github.com/Costava/Parity-Ship" target="_blank">View source on Github</a></li>
                 </ul>
 
@@ -52,13 +54,15 @@
             <div id="end-menu" class="menu">
                 <h1 class="name">Parity Ship</h1>
 
-                <div id="score-container">
-                    Ships Informed:&nbsp;<span id="score">0</span>
-                </div>
+                <ul class="score-list">
+                    <li id="score-container">
+                        Ships Informed:&nbsp;<span id="score">0</span>
+                    </li>
 
-                <div id="high-score-container">
-                    <span id="new"></span>High Score:&nbsp;<span id="high-score">0</span>
-                </div>
+                    <li id="high-score-container">
+                        <span id="new"></span>High Score:&nbsp;<span id="high-score">0</span>
+                    </li>
+                </ul>
 
                 <nav class="button-bar">
                     <button id="again-button">Play Again</button>
