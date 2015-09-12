@@ -459,6 +459,7 @@ function loop() {
 
 			var interval = 10;//milliseconds
 			var numIntervals = 100;
+			// red overlay
 			for (var i = 0; i < numIntervals; i++) {
 				setTimeout(function() {
 					game.ctx.save();
@@ -471,6 +472,16 @@ function loop() {
 			setTimeout(function() {
 				game.changeMenu(game.menus.end);
 			}, interval * numIntervals + 500);
+
+			// make overlay closer to menu color
+			for (var i = 0; i < numIntervals; i++) {
+				setTimeout(function() {
+					game.ctx.save();
+					game.ctx.fillStyle = 'rgba(80, 100, 255, 0.01)';
+					game.ctx.fillRect(0, 0, game.canvas.width, game.canvas.height);
+					game.ctx.restore();
+				}, (interval * numIntervals + 500) + i * interval);
+			}
 
 			return true;//stop checking ships
 		}
