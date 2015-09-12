@@ -131,6 +131,9 @@ function Game() {
 
     this.minShipSpeed = 0.060;
     this.maxShipSpeed = 0.140;
+	this.shipTopSpeed = this.maxShipSpeed;
+	// max ship speed will be lowered at start of game and raised back up
+	// to shipTopSpeed in increments over time
 
     this.minShipRadius = 2;
     this.maxShipRadius = 5;
@@ -225,6 +228,11 @@ Game.prototype.startGame = function() {
     this.fadeBars = [];
 	this.planets = [];
 
+	this.shipSpeedStepUps = [];
+	// ^ array of setTimeouts that will ramp up maxShipSpeed.
+	//   A list of these must be kept so that they can be stopped if
+	//   game ends before all have happened
+
     this.score = 0;
 
     this.canvas = document.createElement('canvas');
@@ -267,6 +275,35 @@ Game.prototype.startGame = function() {
     game.currentTime = new Date().getTime();
 
 	game.looping = true;
+
+	//////////// Ease up max ship speed
+	//game.maxShipSpeed
+	var interval = 1000;//milliseconds between step ups
+	var deltaSpeed = 0.012;
+	var numIntervals = Math.floor( (game.shipTopSpeed - game.minShipSpeed) / deltaSpeed );
+
+	game.maxShipSpeed = game.shipTopSpeed - (numIntervals * deltaSpeed);
+
+	// numIntervals-1 because the final interval will set game.maxShipSpeed t0 game.shipTopSpeed
+	for (var i = 0; i < numIntervals-1; i++) {
+		var to = window.setTimeout(function() {
+			game.maxShipSpeed += deltaSpeed;
+
+			// console.log('g.mSS', game.maxShipSpeed);
+		}, (i+1) * interval);
+
+		game.shipSpeedStepUps.push(to);
+		// ^ these will be cleared when game ends in case
+		//   game ended before all steps done
+	}
+
+	var to = window.setTimeout(function() {
+		game.maxShipSpeed = game.shipTopSpeed;
+	}, numIntervals * interval);
+
+	game.shipSpeedStepUps.push(to);
+
+	////////////
 
     loop();
 };
@@ -446,6 +483,12 @@ function loop() {
 			document.removeEventListener('mousemove', TrackMouse);
 			document.removeEventListener('click', ShootMouse);
 
+			// stop ship speed step ups that are left
+			game.shipSpeedStepUps.forEach(function(step, index, steps) {
+				// console.log('clearTimeout');
+				window.clearTimeout(step);
+			});
+
 			if (game.score > game.highScore) {
 				game.highScore = game.score;
 				document.querySelector('#new').innerHTML = 'New&nbsp;';
@@ -473,7 +516,7 @@ function loop() {
 				game.changeMenu(game.menus.end);
 			}, interval * numIntervals + 500);
 
-			// make overlay closer to menu color
+			// make canvas overlay closer to menu color
 			for (var i = 0; i < numIntervals; i++) {
 				setTimeout(function() {
 					game.ctx.save();
