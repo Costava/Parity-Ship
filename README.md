@@ -5,3 +5,5 @@ Strong interference is blocking communications in this area, and the ships in yo
 Developed for [js13kGames 2015](http://2015.js13kgames.com/).
 
 ### [Play online!](https://costava.github.io/Parity-Ship/src/)
+
+![Parity Ship](http://i.imgur.com/oWbPmZv.png)
