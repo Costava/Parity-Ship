@@ -1,0 +1,26 @@
+{
+  "name": "parity-ship",
+  "version": "0.0.0",
+  "description": "Save the fleet.",
+  "main": "scripts/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tasks": "gulp",
+    "build-dev": "webpack --watch --progress",
+    "build": "webpack -p"
+  },
+  "author": "Costava",
+  "devDependencies": {
+    "babel": "^6.1.18",
+    "babel-core": "^6.2.1",
+    "babel-loader": "^6.2.0",
+    "bluebird": "^3.0.5",
+    "del": "^2.1.0",
+    "gulp": "^3.9.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.1",
+    "gulp-util": "^3.0.7",
+    "run-sequence": "^1.1.4",
+    "webpack": "^1.12.6"
+  }
+}
