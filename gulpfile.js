@@ -10,9 +10,6 @@ var webpack = require('webpack');
 
 var webpackConfig = require('./webpack.config.js');
 
-var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-
 // Default Task
 gulp.task('default', function(callback) {
 	runSequence(
