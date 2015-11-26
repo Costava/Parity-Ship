@@ -6,9 +6,11 @@
   "main": "src/scripts/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tasks": "gulp",
-    "build-dev": "webpack --watch --progress",
-    "build": "webpack -p"
+    "gulp": "gulp",
+    "webpack": "webpack",
+    "build-dev": "gulp default",
+    "build-production": "gulp production-build",
+    "debug-scripts": "webpack --watch --progress"
   },
   "devDependencies": {
     "babel-core": "^6.2.1",
