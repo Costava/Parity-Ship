@@ -76,7 +76,7 @@ function Game() {
 }
 
 Game.prototype.hideMenu = function(menu) {
-	var buttons = menu.getElementsByTagName('button');
+	var buttons = menu.querySelectorAll('.js-menu-button');
 	for (var i = 0; i < buttons.length; i++) {
 		buttons[i].disabled = true;
 	}
@@ -88,7 +88,7 @@ Game.prototype.hideMenu = function(menu) {
 };
 
 Game.prototype.showMenu = function(menu) {
-	var buttons = menu.getElementsByTagName('button');
+	var buttons = menu.querySelectorAll('.js-menu-button');
 	for (var i = 0; i < buttons.length; i++) {
 		buttons[i].disabled = false;
 	}
@@ -157,7 +157,7 @@ Game.prototype.startGame = function() {
 	this.planets = [];
 
 	//check if planets should have shadow
-	this.blurCheckbox = document.querySelector('#planet-blur');
+	this.blurCheckbox = document.querySelector('.js-planet-blur');
 	this.planetBlur = this.blurCheckbox.checked;
 
 	this.shipSpeedStepUps = [];
@@ -168,7 +168,7 @@ Game.prototype.startGame = function() {
 	this.score = 0;
 
 	this.canvas = document.createElement('canvas');
-	this.canvasCont = document.querySelector('#canvas-container');
+	this.canvasCont = document.querySelector('.js-canvas-container');
 	this.canvasContAspRatio = this.canvasCont.offsetWidth / this.canvasCont.offsetHeight;
 
 	if (this.aspectRatio() == this.canvasContAspRatio) {

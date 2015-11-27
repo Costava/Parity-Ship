@@ -205,14 +205,14 @@ function loop() {
 
 			if (game.score > game.highScore) {
 				game.highScore = game.score;
-				document.querySelector('#new').innerHTML = 'New&nbsp;';
+				document.querySelector('.js-new').innerHTML = 'New&nbsp;';
 			}
 			else {
-				document.querySelector('#new').innerHTML = '';
+				document.querySelector('.js-new').innerHTML = '';
 			}
 
-			document.querySelector('#score').innerHTML = game.score;
-			document.querySelector('#high-score').innerHTML = game.highScore;
+			document.querySelector('.js-score').innerHTML = game.score;
+			document.querySelector('.js-high-score').innerHTML = game.highScore;
 
 			var interval = 10;//milliseconds
 			var numIntervals = 100;
@@ -286,26 +286,26 @@ function loop() {
 
 game.loop = loop;
 
-['main', 'about', 'pause', 'end'].forEach(function(term) {
-	game.menus[term] = document.querySelector('#'+term+'-menu');
+['main', 'about', /*'pause', */'end'].forEach(function(term) {
+	game.menus[term] = document.querySelector(`.js-${term}-menu`);
 });
 
-document.querySelector('#play-button').addEventListener('click', function() {
+document.querySelector('.js-play-button').addEventListener('click', function() {
 	game.startGame();
 });
 
-document.querySelector('#about-button').addEventListener('click', function() {
+document.querySelector('.js-about-button').addEventListener('click', function() {
 	game.changeMenu(game.menus.about);
 });
-document.querySelector('#back-button').addEventListener('click', function() {
+document.querySelector('.js-back-button').addEventListener('click', function() {
 	game.changeMenu(game.menus.main);
 });
 
-document.querySelector('#again-button').addEventListener('click', function() {
+document.querySelector('.js-again-button').addEventListener('click', function() {
 	game.startGame();
 });
 
-document.querySelector('#return-button').addEventListener('click', function() {
+document.querySelector('.js-return-button').addEventListener('click', function() {
 	game.changeMenu(game.menus.main);
 });
 
