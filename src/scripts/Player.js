@@ -7,6 +7,14 @@ function Player() {
 	// this.pos.x = 0;
 	// this.pos.y = 0;
 
+	this.targetPos = {};
+	this.targetPos.x = this.pos.x;
+	this.targetPos.y = this.pos.y;
+
+	// max speed player can move in both x and y directions at same time
+	// unit is per millisecond
+	this.speed = 0.5;
+
 	this.radius = 5;
 	this.sideLength = 3;//side length of inner triangle
 	this.color = new Color(255, 255, 255, 1);//outer color
@@ -14,6 +22,22 @@ function Player() {
 
 	this.hits = 0;//number of times hit by corrupt data
 }
+
+Player.prototype.move = function(dt) {
+	var maxMove = this.speed * dt;
+
+	["x", "y"].forEach(function(prop) {
+		var diff = this.targetPos[prop] - this.pos[prop];
+
+		if (maxMove >= Math.abs(diff)) {
+			this.pos[prop] = this.targetPos[prop];
+		}
+		else {
+			this.pos[prop] += maxMove * (Math.abs(diff) / diff);
+		}
+	}.bind(this)/* bind player as this */);
+};
+
 /*
  * @param {number} vh - 1% of horizontal length of canvas
  */

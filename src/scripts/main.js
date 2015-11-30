@@ -74,6 +74,9 @@ function loop() {
 		game.newPlanetTime = game.newTime;
 	}
 
+	// move player
+	game.player.move(game.dt);
+
 	// move planets
 	game.planets.forEach(function(planet, index, planets) {
 		var dx = planet.speed.x * game.dt;

@@ -64,7 +64,7 @@ function Game() {
 		var pos = this.EventPos(e);
 
 		if (this.isVhPosOnCanvas(pos)) {
-			this.player.pos = pos;
+			this.player.targetPos = pos;
 		}
 	}.bind(this);
 
