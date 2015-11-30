@@ -54,7 +54,7 @@ function Game() {
 		pos.y = pos.y / this.vh;
 
 		return pos;
-	}.bind(this);
+	};
 
 	this.TrackMouse = function(e) {
 		// console.log('mouse', e.clientX, e.clientY);//mouse position
