@@ -27,21 +27,21 @@ ColorChanger.prototype.change = function(dt) {
 	if (this.timeLeft > 0) {
 		// console.log('dt', dt);
 
+		var dtUsed = Math.min(dt, this.timeLeft);
+
+		var self = this;
+		['r', 'g', 'b', 'a'].forEach(function(letter) {
+			self.target.color[letter] += self['d'+letter] * dtUsed;
+		});
+
+		// console.log('bc', this.target.color);
+		this.target.color.clamp();
+		// console.log('ac', this.target.color);
+
 		if (dt < this.timeLeft) {
-			var self = this;
-			['r', 'g', 'b', 'a'].forEach(function(letter, index, letters) {
-				self.target.color[letter] += self['d'+letter] * dt;
-			});
-
-			// console.log('bc', this.target.color);
-			this.target.color.clamp();
-			// console.log('ac', this.target.color);
-
 			this.timeLeft -= dt;
 		}
 		else {//dt is greater than or equal to timeLeft
-			this.target.color = this.finalColor;
-
 			this.timeLeft = 0;
 
 			this.callback();
