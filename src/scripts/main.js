@@ -77,6 +77,10 @@ function loop() {
 	// move player
 	game.player.move(game.dt);
 
+	if (game.mousedown) {
+		game.tryShoot({x: game.player.pos.x, y: game.player.pos.y}, game.newTime);
+	}
+
 	// move planets
 	game.planets.forEach(function(planet, index, planets) {
 		var dx = planet.speed.x * game.dt;
@@ -197,8 +201,10 @@ function loop() {
 			console.log('Game over!');
 			game.looping = false;
 
-			document.removeEventListener('mousemove', game.TrackMouse);
-			document.removeEventListener('click', game.ShootMouse);
+			document.removeEventListener('mousemove', game.TrackMousePos);
+			document.removeEventListener('mousedown', game.TrackMousedown);
+			document.removeEventListener('mouseup', game.TrackMouseup);
+			document.removeEventListener('click', game.ShootListener);
 
 			// stop ship speed step ups that are left
 			game.shipSpeedStepUps.forEach(function(step, index, steps) {

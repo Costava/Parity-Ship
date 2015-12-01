@@ -56,7 +56,17 @@ function Game() {
 		return pos;
 	};
 
-	this.TrackMouse = function(e) {
+	this.mousedown = false;
+
+	this.TrackMousedown = function() {
+		this.mousedown = true;
+	}.bind(this);
+
+	this.TrackMouseup = function() {
+		this.mousedown = false;
+	}.bind(this);
+
+	this.TrackMousePos = function(e) {
 		// console.log('mouse', e.clientX, e.clientY);//mouse position
 		// http://stackoverflow.com/questions/3234256/find-mouse-position-relative-to-element
 		// console.log('mouse', e.clientX-game.canvas.offsetLeft, e.clientY-game.canvas.offsetTop);
@@ -68,7 +78,7 @@ function Game() {
 		}
 	}.bind(this);
 
-	this.ShootMouse = function(e) {
+	this.ShootListener = function(e) {
 		var pos = this.EventPos(e);
 
 		this.tryShoot(pos);
@@ -131,10 +141,7 @@ Game.prototype.isVhPosOnCanvas = function(pos) {
 	return false;
 };
 
-Game.prototype.tryShoot = function(pos) {
-	// console.log('tryShoot');
-	var currentTime = new Date().getTime();
-
+Game.prototype.tryShoot = function(pos, currentTime) {
 	if (currentTime - this.shootTime > this.shootInterval) {
 		var packet = new CleanPacket(pos);
 
@@ -202,9 +209,13 @@ Game.prototype.startGame = function() {
 	//
 	// game.ctx.restore();
 
-	document.addEventListener('mousemove', this.TrackMouse);
+	document.addEventListener('mousemove', this.TrackMousePos);
 	(function(self) {
-		setTimeout(function(){document.addEventListener('click', self.ShootMouse);}, 100);
+		setTimeout(function(){
+			document.addEventListener('click', self.ShootListener);
+			document.addEventListener('mousedown', self.TrackMousedown);
+			document.addEventListener('mouseup', self.TrackMouseup);
+		}, 100);
 	})(this);
 
 	this.currentTime = new Date().getTime();
