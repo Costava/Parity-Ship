@@ -11,17 +11,17 @@ function Game() {
 	this.menuShowDuration = '0.5s';
 	this.menuHideDuration = '0.2s';
 
-	this.shootInterval = 400;// min time between shots in milliseconds
+	this.shootInterval = 300;// min time between shots in milliseconds
 	this.shootTime = 0;
 
-	this.newShipInterval = 100;// time between new ship spawned in milliseconds
+	this.newShipInterval = 95;// time between new ship spawned in milliseconds
 	this.newShipTime = 0;
 
 	this.fadeBarTime = 800;
 	this.cpFadeTime = 300;
 
 	this.minShipSpeed = 0.060;
-	this.maxShipSpeed = 0.140;
+	this.maxShipSpeed = 0.102;
 	this.shipTopSpeed = this.maxShipSpeed;
 	// max ship speed will be lowered at start of game and raised back up
 	// to shipTopSpeed in increments over time
@@ -29,7 +29,7 @@ function Game() {
 	this.minShipRadius = 2;
 	this.maxShipRadius = 5;
 
-	this.newPlanetInterval = 90;
+	this.newPlanetInterval = 80;
 	this.newPlanetTime = 0;
 
 	this.minPlanetLength = 1;
@@ -223,27 +223,32 @@ Game.prototype.startGame = function() {
 	//////////// Ease up max ship speed
 	//game.maxShipSpeed
 	var interval = 1000;//milliseconds between step ups
-	var deltaSpeed = 0.012;
+	var deltaSpeed = 0.005;
 	var numIntervals = Math.floor( (this.shipTopSpeed - this.minShipSpeed) / deltaSpeed );
 
 	this.maxShipSpeed = this.shipTopSpeed - (numIntervals * deltaSpeed);
 
+	var to;
 	// numIntervals-1 because the final interval will set game.maxShipSpeed t0 game.shipTopSpeed
 	for (var i = 0; i < numIntervals-1; i++) {
-		var to = window.setTimeout(function() {
-			this.maxShipSpeed += deltaSpeed;
+		(function (game) {
+			to = window.setTimeout(function() {
+				game.maxShipSpeed += deltaSpeed;
 
-			// console.log('g.mSS', game.maxShipSpeed);
-		}, (i+1) * interval);
+				// console.log('g.mSS', game.maxShipSpeed);
+			}, (i+1) * interval);
+		})(this);
 
 		this.shipSpeedStepUps.push(to);
 		// ^ these will be cleared when game ends in case
 		//   game ended before all steps done
 	}
 
-	var to = window.setTimeout(function() {
-		this.maxShipSpeed = this.shipTopSpeed;
-	}, numIntervals * interval);
+	(function(game) {
+		to = window.setTimeout(function() {
+			game.maxShipSpeed = game.shipTopSpeed;
+		}, numIntervals * interval);
+	})(this);
 
 	this.shipSpeedStepUps.push(to);
 
