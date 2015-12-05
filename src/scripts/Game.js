@@ -6,8 +6,6 @@ function Game() {
 	this.aspectRatioWidth = 16;
 	this.aspectRatioHeight = 9;
 
-	this.canvasContainer = document.querySelector('body');
-
 	this.menus = {};
 	this.currentMenu;
 	this.menuShowDuration = '0.5s';
