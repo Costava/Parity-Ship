@@ -14,7 +14,7 @@ function Game() {
 	this.shootInterval = 400;// min time between shots in milliseconds
 	this.shootTime = 0;
 
-	this.newShipInterval = 140;// time between new ship spawned in milliseconds
+	this.newShipInterval = 100;// time between new ship spawned in milliseconds
 	this.newShipTime = 0;
 
 	this.fadeBarTime = 800;
@@ -32,7 +32,7 @@ function Game() {
 	this.newPlanetInterval = 90;
 	this.newPlanetTime = 0;
 
-	this.minPlanetLength = 2;
+	this.minPlanetLength = 1;
 	this.maxPlanetLength = 6;
 
 	this.highScore = 0;
