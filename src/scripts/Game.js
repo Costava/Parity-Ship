@@ -184,7 +184,7 @@ Game.prototype.startGame = function() {
 		this.canvas.height = this.canvasCont.offsetHeight;
 		this.canvas.width = this.canvas.height * this.aspectRatio();
 	}
-	else if (this.aspectRatio > this.canvasContAspRatio) {
+	else if (this.aspectRatio() > this.canvasContAspRatio) {
 		this.canvas.width = this.canvasCont.offsetWidth;
 		this.canvas.height = this.canvas.width / this.aspectRatio();
 	}
