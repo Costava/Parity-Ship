@@ -149,6 +149,36 @@ Game.prototype.tryShoot = function(pos, currentTime) {
 	}
 };
 
+Game.prototype._draw = function(ctx) {
+	ctx.save();
+	ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	ctx.scale(this.vh, this.vh);
+
+	this.planets.forEach(function(planet) {
+		planet.draw(ctx, this.planetBlur);
+	}.bind(this));
+
+	this.cleanPackets.forEach(function(packet) {
+		packet.draw(ctx);
+	}.bind(this));
+
+	this.fadeBars.forEach(function(bar) {
+		bar.draw(ctx);
+	}.bind(this));
+
+	this.player.draw(ctx);
+
+	this.ships.forEach(function(ship) {
+		ship.draw(ctx);
+	}.bind(this));
+
+	ctx.restore();
+};
+
+Game.prototype.draw = function() {
+	this._draw(this.ctx);
+};
+
 Game.prototype.startGame = function() {
 	this.changeMenu();//hide current menu
 

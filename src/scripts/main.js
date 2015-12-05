@@ -261,31 +261,8 @@ function loop() {
 	//invert inner color of player before drawing
 	game.player.innerColor = game.player.color.inverse();
 
-	game.ctx.save();
-	game.ctx.clearRect(0, 0, game.canvas.width, game.canvas.height);
-	game.ctx.scale(game.vh, game.vh);
+	game.draw();
 
-	game.planets.forEach(function(planet, index, planets) {
-		planet.draw(game.ctx, game.planetBlur);
-	});
-
-	game.cleanPackets.forEach(function(packet, index, packets) {
-		packet.draw(game.ctx);
-	});
-
-	game.fadeBars.forEach(function(bar, index, bars) {
-		bar.draw(game.ctx);
-	});
-
-	game.player.draw(game.ctx);
-
-	game.ships.forEach(function(ship, index, ships) {
-		ship.draw(game.ctx);
-	});
-
-	game.ctx.restore();
-
-	// game.currentTime = new Date().getTime();
 	game.currentTime = game.newTime;
 
 	if (game.looping) {
