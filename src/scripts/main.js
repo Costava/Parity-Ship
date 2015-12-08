@@ -195,17 +195,8 @@ function loop() {
 		if (distance < colDistance) {
 			// game over
 			console.log('Game over!');
-			game.looping = false;
 
-			document.removeEventListener('mousemove', game.TrackMousePos);
-			document.removeEventListener('mousedown', game.TrackMousedown);
-			document.removeEventListener('mouseup', game.TrackMouseup);
-			document.removeEventListener('click', game.ShootListener);
-
-			// stop ship speed step ups that are left
-			game.shipSpeedStepUps.forEach(function(step) {
-				window.clearTimeout(step);
-			});
+			game.endGameCleanUp();
 
 			if (game.score > game.highScore) {
 				game.highScore = game.score;
@@ -238,7 +229,8 @@ function loop() {
 			for (var i = 0; i < numIntervals; i++) {
 				setTimeout(function() {
 					game.ctx.save();
-					game.ctx.fillStyle = 'rgba(80, 100, 255, 0.01)';
+					// game.ctx.fillStyle = 'rgba(80, 100, 255, 0.01)';
+					game.ctx.fillStyle = 'rgba(0, 0, 0, 0.01)';
 					game.ctx.fillRect(0, 0, game.canvas.width, game.canvas.height);
 					game.ctx.restore();
 				}, (interval * numIntervals + 500) + i * interval);

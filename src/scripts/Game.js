@@ -37,6 +37,12 @@ function Game() {
 
 	this.highScore = 0;
 
+	// game container's background color for different situations
+	this.playBackgroundColor = 'rgba(80, 100, 255, 0.7)';
+	// ^ When a game is in progress
+	this.menuBackgroundColor = '#000';
+	// ^ When a menu is up
+
 	this.loop = function() {
 		console.log("Default loop call");
 	};
@@ -182,6 +188,8 @@ Game.prototype.draw = function() {
 Game.prototype.startGame = function() {
 	this.changeMenu();//hide current menu
 
+	document.querySelector('.game-container').style['background-color'] = this.playBackgroundColor;
+
 	this.player = new Player();
 
 	this.ships = [];
@@ -285,6 +293,22 @@ Game.prototype.startGame = function() {
 	//////////
 
 	this.loop();
+};
+
+Game.prototype.endGameCleanUp = function() {
+	this.looping = false;
+
+	document.removeEventListener('mousemove', this.TrackMousePos);
+	document.removeEventListener('mousedown', this.TrackMousedown);
+	document.removeEventListener('mouseup', this.TrackMouseup);
+	document.removeEventListener('click', this.ShootListener);
+
+	// stop ship speed step ups that are left
+	this.shipSpeedStepUps.forEach(function(step) {
+		window.clearTimeout(step);
+	});
+
+	document.querySelector('.game-container').style['background-color'] = this.menuBackgroundColor;
 };
 
 module.exports = Game;
