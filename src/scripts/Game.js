@@ -38,7 +38,7 @@ function Game() {
 	this.highScore = 0;
 
 	// game container's background color for different situations
-	this.playBackgroundColor = 'rgba(80, 100, 255, 0.7)';
+	this.playBackgroundColor = 'rgba(91, 112, 179, 1)';
 	// ^ When a game is in progress
 	this.menuBackgroundColor = '#000';
 	// ^ When a menu is up

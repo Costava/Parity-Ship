@@ -13,7 +13,7 @@ html, body, .game-container, .canvas-container {
 	padding: 0;
 }
 
-a {
+.game-container a {
 	transition: all;
 	transition-duration: 0.2s;
 
@@ -21,7 +21,7 @@ a {
 	text-decoration: underline;
 }
 
-a:hover {
+.game-container a:hover {
 	color: rgb(200, 200, 255);
 	text-decoration: underline;
 }
@@ -44,7 +44,7 @@ a:hover {
 	justify-content: center;
 }
 
-canvas {
+.game-container canvas {
 	background-color: #000;
 }
 
@@ -72,6 +72,10 @@ canvas {
 	align-items: center;
 }
 
+.menu > * {
+	margin: 8px 0 8px 0;
+}
+
 .about-info {
 	max-width: 500px;
 }
@@ -95,7 +99,7 @@ canvas {
 	background-color: rgba(0, 0, 0, 0.4);
 }
 
-button {
+.game-container button {
 	transition: all;
 	transition-duration: 0.2s;
 
@@ -105,7 +109,7 @@ button {
 	color: inherit;
 }
 
-button:hover {
+.game-container button:hover {
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
@@ -118,4 +122,8 @@ button:hover {
 
 .score-list {
 	text-align: center;
+}
+
+.info-list > li {
+	margin: 2px 0 2px 0;
 }
