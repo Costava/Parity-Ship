@@ -13,9 +13,11 @@ function Game() {
 
 	this.shootInterval = 300;// min time between shots in milliseconds
 	this.shootTime = 0;
+	this.shootIntervalCurrent = 0;
 
 	this.newShipInterval = 95;// time between new ship spawned in milliseconds
 	this.newShipTime = 0;
+	this.newShipIntervalCurrent = 0;
 
 	this.fadeBarTime = 800;
 	this.cpFadeTime = 300;
@@ -37,11 +39,17 @@ function Game() {
 
 	this.highScore = 0;
 
+	this.shipSpeedStepUps = [];
+
 	// game container's background color for different situations
 	this.playBackgroundColor = 'rgba(91, 112, 179, 1)';
 	// ^ When a game is in progress
 	this.menuBackgroundColor = '#000';
 	// ^ When a menu is up
+
+	this.paused = false;
+	this.resuming = false;
+	this.inProgress = false;
 
 	this.loop = function() {
 		console.log("Default loop call");
@@ -62,19 +70,19 @@ function Game() {
 
 	this.mousedown = false;
 
-	this.TrackMousedown = function() {
-		this.mousedown = true;
+	this.TrackLeftMousedown = function(e) {
+		if (e.which === 1/* left click */) {
+			this.mousedown = true;
+		}
 	}.bind(this);
 
-	this.TrackMouseup = function() {
-		this.mousedown = false;
+	this.TrackLeftMouseup = function(e) {
+		if (e.which === 1/* left click */) {
+			this.mousedown = false;
+		}
 	}.bind(this);
 
 	this.TrackMousePos = function(e) {
-		// console.log('mouse', e.clientX, e.clientY);//mouse position
-		// http://stackoverflow.com/questions/3234256/find-mouse-position-relative-to-element
-		// console.log('mouse', e.clientX-game.canvas.offsetLeft, e.clientY-game.canvas.offsetTop);
-
 		var pos = this.EventPos(e);
 
 		if (this.isVhPosOnCanvas(pos)) {
@@ -83,9 +91,11 @@ function Game() {
 	}.bind(this);
 
 	this.ShootListener = function(e) {
-		var pos = this.EventPos(e);
+		if (e.which === 1/* left click */) {
+			var pos = this.EventPos(e);
 
-		this.tryShoot(pos);
+			this.tryShoot(pos);
+		}
 	}.bind(this);
 }
 
@@ -186,6 +196,11 @@ Game.prototype.draw = function() {
 };
 
 Game.prototype.startGame = function() {
+	this.paused = false;
+	this.resuming = false;
+	this.inProgress = true;
+	this.mousedown = false;
+
 	this.changeMenu();//hide current menu
 
 	document.querySelector('.game-container').style['background-color'] = this.playBackgroundColor;
@@ -211,6 +226,7 @@ Game.prototype.startGame = function() {
 	this.score = 0;
 
 	this.canvas = document.createElement('canvas');
+	this.canvas.className = "game-canvas js-game-canvas";
 	this.canvasCont = document.querySelector('.js-canvas-container');
 	this.canvasContAspRatio = this.canvasCont.offsetWidth / this.canvasCont.offsetHeight;
 
@@ -249,17 +265,12 @@ Game.prototype.startGame = function() {
 	(function(self) {
 		setTimeout(function(){
 			document.addEventListener('click', self.ShootListener);
-			document.addEventListener('mousedown', self.TrackMousedown);
-			document.addEventListener('mouseup', self.TrackMouseup);
+			document.addEventListener('mousedown', self.TrackLeftMousedown);
+			document.addEventListener('mouseup', self.TrackLeftMouseup);
 		}, 100);
 	})(this);
 
-	this.currentTime = new Date().getTime();
-
-	this.looping = true;
-
 	//////////// Ease up max ship speed
-	//game.maxShipSpeed
 	var interval = 1000;//milliseconds between step ups
 	var deltaSpeed = 0.005;
 	var numIntervals = Math.floor( (this.shipTopSpeed - this.minShipSpeed) / deltaSpeed );
@@ -292,15 +303,72 @@ Game.prototype.startGame = function() {
 
 	//////////
 
+	this.oldTime = new Date().getTime();
+
+	this.looping = true;
+
 	this.loop();
 };
 
-Game.prototype.endGameCleanUp = function() {
+Game.prototype.pause = function()  {
 	this.looping = false;
+	this.paused = true;
+	this.resuming = false;
+
+	var currentTime = new Date().getTime();
+
+	['shoot', 'newShip'].forEach(function(kind) {
+		this[kind + 'IntervalCurrent'] = currentTime - this[kind + 'Time'];
+	}.bind(this));
+
+	document.querySelector('.game-container').style['background-color'] = this.menuBackgroundColor;
+
+	this.changeMenu(this.menus.pause);
+};
+
+Game.prototype.resume = function() {
+	this.resuming = true;
+
+	this.changeMenu();
+
+	document.querySelector('.game-container').style['background-color'] = this.playBackgroundColor;
+
+	setTimeout(function() {
+		var currentTime = new Date().getTime();
+
+		['shoot', 'newShip'].forEach(function(kind) {
+			this[kind + 'Time'] = currentTime - this[kind + 'IntervalCurrent'];
+		}.bind(this));
+
+		this.oldTime = currentTime;
+
+		this.paused = false;
+		this.resuming = false;
+		this.looping = true;
+		this.loop();
+	}.bind(this), 800);
+};
+
+Game.prototype.tryTogglePause = function() {
+	if (this.inProgress) {
+		if (this.paused && !this.resuming) {
+			this.resume();
+		}
+		else if (!this.paused && !this.resuming){
+			this.pause();
+		}
+	}
+};
+
+Game.prototype.endGameCleanUp = function() {
+	this.inProgress = false;
+	this.looping = false;
+	this.paused = false;
+	this.resuming = false;
 
 	document.removeEventListener('mousemove', this.TrackMousePos);
-	document.removeEventListener('mousedown', this.TrackMousedown);
-	document.removeEventListener('mouseup', this.TrackMouseup);
+	document.removeEventListener('mousedown', this.TrackLeftMousedown);
+	document.removeEventListener('mouseup', this.TrackLeftMouseup);
 	document.removeEventListener('click', this.ShootListener);
 
 	// stop ship speed step ups that are left

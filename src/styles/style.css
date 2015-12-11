@@ -14,7 +14,7 @@ html, body, .game-container, .canvas-container {
 }
 
 .game-container a {
-	transition: all;
+	transition-property: all;
 	transition-duration: 0.2s;
 
 	color: inherit;
@@ -32,7 +32,7 @@ html, body, .game-container, .canvas-container {
 
 	color: #fff;
 
-	transition: background-color;
+	transition-property: background-color;
 	transition-duration: 1s;
 
 	overflow: hidden;
@@ -44,8 +44,11 @@ html, body, .game-container, .canvas-container {
 	justify-content: center;
 }
 
-.game-container canvas {
+.game-canvas {
 	background-color: #000;
+
+	transition-property: background-color;
+	transition-duration: 1s;
 }
 
 .menu {
@@ -61,7 +64,7 @@ html, body, .game-container, .canvas-container {
 
 	top: -100%;
 	bottom: 100%;
-	transition: top, bottom;
+	transition-property: top, bottom;
 	transition-timing-function: ease-out;
 	transition-duration: 2s;
 
@@ -100,7 +103,7 @@ html, body, .game-container, .canvas-container {
 }
 
 .game-container button {
-	transition: all;
+	transition-property: all;
 	transition-duration: 0.2s;
 
 	background-color: rgba(0, 0, 0, 0.1);

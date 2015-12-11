@@ -26,7 +26,7 @@ var game = new Game();
 
 function loop() {
 	game.newTime = new Date().getTime();
-	game.dt = game.newTime - game.currentTime;
+	game.dt = game.newTime - game.oldTime;
 
 	// check if should make new ship
 	if (game.newTime - game.newShipTime > game.newShipInterval) {
@@ -209,32 +209,14 @@ function loop() {
 			document.querySelector('.js-score').innerHTML = game.score;
 			document.querySelector('.js-high-score').innerHTML = game.highScore;
 
-			var interval = 10;//milliseconds
-			var numIntervals = 100;
-			// red overlay
-			for (var i = 0; i < numIntervals; i++) {
-				setTimeout(function() {
-					game.ctx.save();
-					game.ctx.fillStyle = 'rgba(230, 54, 60, 0.01)';
-					game.ctx.fillRect(0, 0, game.canvas.width, game.canvas.height);
-					game.ctx.restore();
-				}, i * interval);
-			}
+			// death red
+			document.querySelector('.js-game-canvas').style['background-color'] = 'rgba(220, 14, 16, 1)';
 
 			setTimeout(function() {
-				game.changeMenu(game.menus.end);
-			}, interval * numIntervals + 500);
+				document.querySelector('.js-game-canvas').style['background-color'] = '#000';
 
-			// make canvas overlay closer to menu color
-			for (var i = 0; i < numIntervals; i++) {
-				setTimeout(function() {
-					game.ctx.save();
-					// game.ctx.fillStyle = 'rgba(80, 100, 255, 0.01)';
-					game.ctx.fillStyle = 'rgba(0, 0, 0, 0.01)';
-					game.ctx.fillRect(0, 0, game.canvas.width, game.canvas.height);
-					game.ctx.restore();
-				}, (interval * numIntervals + 500) + i * interval);
-			}
+				game.changeMenu(game.menus.end);
+			}, 1500);
 
 			return true;// stop checking ships
 		}
@@ -249,7 +231,7 @@ function loop() {
 
 	game.draw();
 
-	game.currentTime = game.newTime;
+	game.oldTime = game.newTime;
 
 	if (game.looping) {
 		window.requestAnimationFrame(loop);
@@ -258,7 +240,7 @@ function loop() {
 
 game.loop = loop;
 
-['main', 'about', /*'pause', */'end'].forEach(function(term) {
+['main', 'about', 'pause', 'end'].forEach(function(term) {
 	game.menus[term] = document.querySelector(`.js-${term}-menu`);
 });
 
@@ -279,6 +261,25 @@ document.querySelector('.js-again-button').addEventListener('click', function() 
 
 document.querySelector('.js-return-button').addEventListener('click', function() {
 	game.changeMenu(game.menus.main);
+});
+
+document.querySelector('.js-resume-button').addEventListener('click', function() {
+	game.resume();
+});
+
+document.querySelector('.js-quit-button').addEventListener('click', function() {
+	game.endGameCleanUp();
+	game.changeMenu(game.menus.main);
+});
+
+document.addEventListener('click', function(e) {
+	if (e.which === 3/* right click */ && game.inProgress) {
+		e.preventDefault();
+
+		game.tryTogglePause();
+
+		return false;
+	}
 });
 
 game.changeMenu(game.menus.main);
