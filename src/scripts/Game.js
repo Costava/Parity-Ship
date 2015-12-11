@@ -323,6 +323,8 @@ Game.prototype.pause = function()  {
 
 	document.querySelector('.game-container').style['background-color'] = this.menuBackgroundColor;
 
+	document.querySelector('.js-pause-score').innerHTML = this.score;
+
 	this.changeMenu(this.menus.pause);
 };
 
