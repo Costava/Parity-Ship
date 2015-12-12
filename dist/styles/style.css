@@ -13,27 +13,32 @@ html, body, .game-container, .canvas-container {
 	padding: 0;
 }
 
-body {
-	font-family: Arial, sans-serif;
-	background-color: rgba(80, 100, 255, 0.7);
-
-	color: white;
-}
-
-a {
-	transition: all;
+.game-container a {
+	transition-property: all;
 	transition-duration: 0.2s;
 
 	color: inherit;
 	text-decoration: underline;
 }
 
-a:hover {
+.game-container a:hover {
 	color: rgb(200, 200, 255);
 	text-decoration: underline;
 }
 
 .game-container {
+	position: absolute;
+
+	font-family: Arial, sans-serif;
+	font-size: 16px;
+
+	background-color: #000;
+
+	color: #fff;
+
+	transition-property: background-color;
+	transition-duration: 1s;
+
 	overflow: hidden;
 }
 
@@ -43,8 +48,11 @@ a:hover {
 	justify-content: center;
 }
 
-canvas {
+.game-canvas {
 	background-color: #000;
+
+	transition-property: background-color;
+	transition-duration: 1s;
 }
 
 .menu {
@@ -53,11 +61,14 @@ canvas {
 
 	overflow: auto;
 
-	background-color: rgba(80, 100, 255, 0.7);
+	/*background-color: rgba(80, 100, 255, 0.7);*/
+	/* ^ Old value that assumes transparency over white background */
+	background-color: rgba(130, 160, 255, 0.7);
+	/* ^ New value assumes transparency over black background */
 
 	top: -100%;
 	bottom: 100%;
-	transition: top, bottom;
+	transition-property: top, bottom;
 	transition-timing-function: ease-out;
 	transition-duration: 2s;
 
@@ -68,8 +79,16 @@ canvas {
 	align-items: center;
 }
 
+.menu > * {
+	margin: 8px 0 8px 0;
+}
+
 .about-info {
 	max-width: 500px;
+}
+
+.info-paragraph {
+	padding: 0 10px 0 10px;
 }
 
 .main-name {
@@ -78,22 +97,24 @@ canvas {
 	font-size: 20vh;
 }
 
-.main-button {
+.button-bar .main-button {
 	font-size: 10vh;
 
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
-.main-button:hover {
+.button-bar .main-button:hover {
 	padding: 2px;
 	border-width: 4px;
 
 	background-color: rgba(0, 0, 0, 0.4);
 }
 
-button {
-	transition: all;
+.button-bar button {
+	transition-property: all;
 	transition-duration: 0.2s;
+
+	font-size: 14px;
 
 	background-color: rgba(0, 0, 0, 0.1);
 	border: 2px solid white;
@@ -101,7 +122,7 @@ button {
 	color: inherit;
 }
 
-button:hover {
+.button-bar button:hover {
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
@@ -114,4 +135,58 @@ button:hover {
 
 .score-list {
 	text-align: center;
+}
+
+.info-list > li {
+	margin: 2px 0 2px 0;
+}
+
+/* ////////////////////////////// */
+
+@media (max-height: 300px) {
+	.game-container {
+		font-size: 10px;
+	}
+
+	.menu:not(.js-main-menu) > * {
+		margin: 2px 0 2px 0;
+	}
+
+	.button-bar button {
+		font-size: 10px;
+	}
+}
+
+@media (min-height: 300px) and (max-height: 350px) {
+	.game-container {
+		font-size: 12px;
+	}
+
+	.menu:not(.js-main-menu) > * {
+		margin: 4px 0 4px 0;
+	}
+
+	.button-bar button {
+		font-size: 10px;
+	}
+}
+
+@media (min-height: 350px) and (max-height: 450px) {
+	.game-container {
+		font-size: 14px;
+	}
+
+	.menu:not(.js-main-menu) > * {
+		margin: 6px 0 6px 0;
+	}
+
+	.button-bar button {
+		font-size: 12px;
+	}
+}
+
+@media (min-height: 450px) {
+	.about-info {
+		max-width: 600px;
+	}
 }
