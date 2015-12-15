@@ -228,23 +228,33 @@ Game.prototype.startGame = function() {
 	this.canvas = document.createElement('canvas');
 	this.canvas.className = "game-canvas js-game-canvas";
 	this.canvasCont = document.querySelector('.js-canvas-container');
-	this.canvasContAspRatio = this.canvasCont.offsetWidth / this.canvasCont.offsetHeight;
 
-	if (this.aspectRatio() == this.canvasContAspRatio) {
-		this.canvas.width = this.canvasCont.offsetWidth;
-		this.canvas.height = this.canvasCont.offsetHeight;
-	}
-	else if (this.aspectRatio() < this.canvasContAspRatio) {
-		this.canvas.height = this.canvasCont.offsetHeight;
-		this.canvas.width = this.canvas.height * this.aspectRatio();
-	}
-	else if (this.aspectRatio() > this.canvasContAspRatio) {
-		this.canvas.width = this.canvasCont.offsetWidth;
-		this.canvas.height = this.canvas.width / this.aspectRatio();
+	function maxChildSize(aspectRatio, containerWidth, containerHeight) {
+		var width, height;
+		var containerAspectRatio = containerWidth / containerHeight;
+
+		if (aspectRatio == containerAspectRatio) {
+			width = containerWidth;
+			height = containerHeight;
+		}
+		else if (aspectRatio < containerAspectRatio) {
+			height = containerHeight;
+			width = height * aspectRatio;
+		}
+		else if (aspectRatio > containerAspectRatio) {
+			width = containerWidth;
+			height = width / aspectRatio;
+		}
+
+		return {width: width, height: height};
 	}
 
-	this.canvas.style.width = this.canvas.width;
-	this.canvas.style.height = this.canvas.height;
+	var size = maxChildSize(this.aspectRatio(), this.canvasCont.offsetWidth, this.canvasCont.offsetHeight);
+
+	this.canvas.style.width = size.width;
+	this.canvas.style.height = size.height;
+	this.canvas.width = size.width;
+	this.canvas.height = size.height;
 
 	this.ctx = this.canvas.getContext('2d');
 
@@ -310,6 +320,16 @@ Game.prototype.startGame = function() {
 	this.loop();
 };
 
+Game.prototype.pauseAction = function() {
+	document.querySelector('.game-container').style['background-color'] = this.menuBackgroundColor;
+	this.canvas.style.transform = "scale(0.8, 0.8)";
+};
+
+Game.prototype.resumeAction = function() {
+	document.querySelector('.game-container').style['background-color'] = this.playBackgroundColor;
+	this.canvas.style.transform = "scale(1, 1)";
+};
+
 Game.prototype.pause = function()  {
 	this.looping = false;
 	this.paused = true;
@@ -321,7 +341,7 @@ Game.prototype.pause = function()  {
 		this[kind + 'IntervalCurrent'] = currentTime - this[kind + 'Time'];
 	}.bind(this));
 
-	document.querySelector('.game-container').style['background-color'] = this.menuBackgroundColor;
+	this.pauseAction();
 
 	document.querySelector('.js-pause-score').innerHTML = this.score;
 
@@ -333,7 +353,7 @@ Game.prototype.resume = function() {
 
 	this.changeMenu();
 
-	document.querySelector('.game-container').style['background-color'] = this.playBackgroundColor;
+	this.resumeAction();
 
 	setTimeout(function() {
 		var currentTime = new Date().getTime();
