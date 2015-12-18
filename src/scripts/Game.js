@@ -1,5 +1,5 @@
+var Util = require('./Util.js');
 var Player = require('./Player.js');
-
 var CleanPacket = require('./CleanPacket.js');
 
 function Game() {
@@ -259,27 +259,7 @@ Game.prototype.startGame = function() {
 	this.canvas.className = "game-canvas js-game-canvas";
 	this.canvasCont = document.querySelector('.js-canvas-container');
 
-	function maxChildSize(aspectRatio, containerWidth, containerHeight) {
-		var width, height;
-		var containerAspectRatio = containerWidth / containerHeight;
-
-		if (aspectRatio == containerAspectRatio) {
-			width = containerWidth;
-			height = containerHeight;
-		}
-		else if (aspectRatio < containerAspectRatio) {
-			height = containerHeight;
-			width = height * aspectRatio;
-		}
-		else if (aspectRatio > containerAspectRatio) {
-			width = containerWidth;
-			height = width / aspectRatio;
-		}
-
-		return {width: width, height: height};
-	}
-
-	var size = maxChildSize(this.aspectRatio(), this.canvasCont.offsetWidth, this.canvasCont.offsetHeight);
+	var size = Util.maxChildSize(this.aspectRatio(), this.canvasCont.offsetWidth, this.canvasCont.offsetHeight);
 
 	this.canvas.style.width = size.width;
 	this.canvas.style.height = size.height;
