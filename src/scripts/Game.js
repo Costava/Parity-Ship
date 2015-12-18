@@ -70,18 +70,6 @@ function Game() {
 
 	this.mousedown = false;
 
-	this.TrackLeftMousedown = function(e) {
-		if (e.which === 1/* left click */) {
-			this.mousedown = true;
-		}
-	}.bind(this);
-
-	this.TrackLeftMouseup = function(e) {
-		if (e.which === 1/* left click */) {
-			this.mousedown = false;
-		}
-	}.bind(this);
-
 	this.TrackMousePos = function(e) {
 		var pos = this.EventPos(e);
 
@@ -91,13 +79,55 @@ function Game() {
 	}.bind(this);
 
 	this.ShootListener = function(e) {
-		if (e.which === 1/* left click */) {
+		// console.log(e.which, e.button);
+
+		if (e.button === 0/* left click */) {
 			var pos = this.EventPos(e);
 
 			this.tryShoot(pos);
 		}
 	}.bind(this);
+
+	this.PauseListener = function(e) {
+		e.preventDefault();
+
+		this.tryTogglePause();
+
+		return false;
+	}.bind(this);
+
+	this.TrackLeftMouseDown = function(e) {
+		if (e.button === 0/* left click */) {
+			this.mousedown = true;
+		}
+	}.bind(this);
+
+	this.TrackLeftMouseUp = function(e) {
+		if (e.button === 0/* left click */) {
+			this.mousedown = false;
+		}
+	}.bind(this);
 }
+
+Game.prototype.bindControls = function(target) {
+	// console.log("bind");
+
+	target.addEventListener('mousemove', this.TrackMousePos);
+	target.addEventListener('click', this.ShootListener);
+	target.addEventListener('contextmenu', this.PauseListener);
+	target.addEventListener('mousedown', this.TrackLeftMouseDown);
+	target.addEventListener('mouseup', this.TrackLeftMouseUp);
+};
+
+Game.prototype.unbindControls = function(target) {
+	// console.log("unbind");
+
+	target.removeEventListener('mousemove', this.TrackMousePos);
+	target.removeEventListener('click', this.ShootListener);
+	target.removeEventListener('contextmenu', this.PauseListener);
+	target.removeEventListener('mousedown', this.TrackLeftMouseDown);
+	target.removeEventListener('mouseup', this.TrackLeftMouseUp);
+};
 
 Game.prototype.hideMenu = function(menu) {
 	var buttons = menu.querySelectorAll('.js-menu-button');
@@ -271,15 +301,6 @@ Game.prototype.startGame = function() {
 	//
 	// game.ctx.restore();
 
-	document.addEventListener('mousemove', this.TrackMousePos);
-	(function(self) {
-		setTimeout(function(){
-			document.addEventListener('click', self.ShootListener);
-			document.addEventListener('mousedown', self.TrackLeftMousedown);
-			document.addEventListener('mouseup', self.TrackLeftMouseup);
-		}, 100);
-	})(this);
-
 	//////////// Ease up max ship speed
 	var interval = 1000;//milliseconds between step ups
 	var deltaSpeed = 0.005;
@@ -313,7 +334,14 @@ Game.prototype.startGame = function() {
 
 	//////////
 
-	this.oldTime = new Date().getTime();
+	var currentTime = new Date().getTime();
+
+	this.newShipTime = currentTime - this.newShipInterval;
+	this.newPlanetTime = currentTime - this.newPlanetInterval;
+	this.shootTime = currentTime + 100;
+	this.oldTime = currentTime;
+
+	this.bindControls(document);
 
 	this.looping = true;
 
@@ -388,10 +416,7 @@ Game.prototype.endGameCleanUp = function() {
 	this.paused = false;
 	this.resuming = false;
 
-	document.removeEventListener('mousemove', this.TrackMousePos);
-	document.removeEventListener('mousedown', this.TrackLeftMousedown);
-	document.removeEventListener('mouseup', this.TrackLeftMouseup);
-	document.removeEventListener('click', this.ShootListener);
+	this.unbindControls(document);
 
 	// stop ship speed step ups that are left
 	this.shipSpeedStepUps.forEach(function(step) {

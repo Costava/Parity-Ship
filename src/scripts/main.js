@@ -272,14 +272,4 @@ document.querySelector('.js-quit-button').addEventListener('click', function() {
 	game.changeMenu(game.menus.main);
 });
 
-document.addEventListener('click', function(e) {
-	if (e.which === 3/* right click */ && game.inProgress) {
-		e.preventDefault();
-
-		game.tryTogglePause();
-
-		return false;
-	}
-});
-
 game.changeMenu(game.menus.main);
