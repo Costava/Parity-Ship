@@ -231,20 +231,20 @@ Game.prototype.startGame = function() {
 	this.inProgress = true;
 	this.mousedown = false;
 
-	this.changeMenu();//hide current menu
+	this.changeMenu();// hide current menu
 
 	document.querySelector('.game-container').style['background-color'] = this.playBackgroundColor;
 
 	this.player = new Player();
 
 	this.ships = [];
-	this.cleanPackets = [];//shot by player
-	this.corrPackets = [];//shot by ships
+	this.cleanPackets = [];// shot by player
+	this.corrPackets = [];// shot by ships
 	this.colorChangers = [];
 	this.fadeBars = [];
 	this.planets = [];
 
-	//check if planets should have shadow
+	// check if planets should have shadow
 	this.blurCheckbox = document.querySelector('.js-planet-blur');
 	this.planetBlur = this.blurCheckbox.checked;
 
@@ -272,17 +272,10 @@ Game.prototype.startGame = function() {
 	this.canvasCont.innerHTML = '';
 	this.canvasCont.appendChild(this.canvas);
 
-	this.vh = this.canvas.width/100;
-
-	// game.ctx.save();
-	// game.ctx.scale(game.vh, game.vh);
-	//
-	// game.player.draw(game.ctx);
-	//
-	// game.ctx.restore();
+	this.vh = this.canvas.width / 100;
 
 	//////////// Ease up max ship speed
-	var interval = 1000;//milliseconds between step ups
+	var interval = 1000;// milliseconds between step ups
 	var deltaSpeed = 0.005;
 	var numIntervals = Math.floor( (this.shipTopSpeed - this.minShipSpeed) / deltaSpeed );
 
@@ -295,7 +288,6 @@ Game.prototype.startGame = function() {
 			to = window.setTimeout(function() {
 				game.maxShipSpeed += deltaSpeed;
 
-				// console.log('g.mSS', game.maxShipSpeed);
 			}, (i+1) * interval);
 		})(this);
 

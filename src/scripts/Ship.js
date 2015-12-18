@@ -5,14 +5,13 @@ function Ship(pos, radius, sideLength, color, speed) {
 	this.sideLength = sideLength;
 	this.outerColor = color;
 	this.innerColor = color.inverse();
-	this.innerColor.a = 1;//make inner fully opaque
+	this.innerColor.a = 1;// make inner fully opaque
 
 	this.speed = speed;
 	this.hit = false;
 }
 
 Ship.prototype.draw = function(ctx) {
-	//console.log('draw');
 	ctx.save();
 
 	ctx.translate(this.pos.x, this.pos.y);

@@ -29,11 +29,9 @@ Color.random = function(alpha) {
 
 Color.prototype.toString = function(excludeA) {
 	if (excludeA) {
-		// return 'rgb('+this.r+','+this.g+','+this.b+')';
 		return `rgb(${this.r}, ${this.g}, ${this.b})`;
 	}
 
-	// return 'rgba('+this.r+','+this.g+','+this.b+','+this.a+')';
 	return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
 };
 
@@ -66,10 +64,9 @@ Color.prototype.invert = function(invertA) {
 };
 
 Color.prototype.clamp = function() {
-	var self = this;
 	['r', 'g', 'b'].forEach(function(letter, index, letters) {
-		self[letter] = Math.max(Math.min(self[letter], 255), 0);
-	});
+		this[letter] = Math.max(Math.min(this[letter], 255), 0);
+	}.bind(this));
 
 	this.a = Math.max(Math.min(this.a, 1), 0);
 };

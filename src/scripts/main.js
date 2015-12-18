@@ -180,14 +180,14 @@ function loop() {
 
 						game.score += 1;
 
-						return true;//break. no need to check rest of ships
+						return true;// break. no need to check rest of ships
 					}
 				}
 			});
 		}
 	});
 
-	//check for player-ship collisions
+	// check for player-ship collisions
 	game.ships.some(function(ship) {
 		var distance = Vector2.distance(game.player.pos, ship.pos);
 		var colDistance = game.player.radius + ship.radius;

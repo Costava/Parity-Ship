@@ -25,8 +25,6 @@ function ColorChanger(initColor, finalColor, time, target) {
  */
 ColorChanger.prototype.change = function(dt) {
 	if (this.timeLeft > 0) {
-		// console.log('dt', dt);
-
 		var dtUsed = Math.min(dt, this.timeLeft);
 
 		var self = this;
@@ -34,9 +32,7 @@ ColorChanger.prototype.change = function(dt) {
 			self.target.color[letter] += self['d'+letter] * dtUsed;
 		});
 
-		// console.log('bc', this.target.color);
 		this.target.color.clamp();
-		// console.log('ac', this.target.color);
 
 		if (dt < this.timeLeft) {
 			this.timeLeft -= dt;
