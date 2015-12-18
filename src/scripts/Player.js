@@ -16,11 +16,11 @@ function Player() {
 	this.speed = 0.5;
 
 	this.radius = 5;
-	this.sideLength = 3;//side length of inner triangle
-	this.color = new Color(255, 255, 255, 1);//outer color
+	this.sideLength = 3;// side length of inner triangle
+	this.color = new Color(255, 255, 255, 1);// outer color
 	this.innerColor = this.color.inverse();
 
-	this.hits = 0;//number of times hit by corrupt data
+	this.hits = 0;// number of times hit by corrupt data
 }
 
 Player.prototype.move = function(dt) {
@@ -45,7 +45,6 @@ Player.prototype.draw = function(ctx) {
 	ctx.save();
 
 	ctx.translate(this.pos.x, this.pos.y);
-	// ctx.scale(1/ratio, 1/ratio);
 	this._draw(ctx);
 
 	ctx.restore();

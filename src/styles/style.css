@@ -51,8 +51,9 @@ html, body, .game-container, .canvas-container {
 .game-canvas {
 	background-color: #000;
 
-	transition-property: background-color;
+	transition-property: background-color, transform;
 	transition-duration: 1s;
+	transition-timing-function: ease;
 }
 
 .menu {

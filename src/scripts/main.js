@@ -180,14 +180,14 @@ function loop() {
 
 						game.score += 1;
 
-						return true;//break. no need to check rest of ships
+						return true;// break. no need to check rest of ships
 					}
 				}
 			});
 		}
 	});
 
-	//check for player-ship collisions
+	// check for player-ship collisions
 	game.ships.some(function(ship) {
 		var distance = Vector2.distance(game.player.pos, ship.pos);
 		var colDistance = game.player.radius + ship.radius;
@@ -270,16 +270,6 @@ document.querySelector('.js-resume-button').addEventListener('click', function()
 document.querySelector('.js-quit-button').addEventListener('click', function() {
 	game.endGameCleanUp();
 	game.changeMenu(game.menus.main);
-});
-
-document.addEventListener('click', function(e) {
-	if (e.which === 3/* right click */ && game.inProgress) {
-		e.preventDefault();
-
-		game.tryTogglePause();
-
-		return false;
-	}
 });
 
 game.changeMenu(game.menus.main);
