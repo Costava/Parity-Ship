@@ -260,6 +260,10 @@ Game.prototype.startGame = function() {
 	this.canvasCont = document.querySelector('.js-canvas-container');
 
 	var size = Util.maxChildSize(this.aspectRatio(), this.canvasCont.offsetWidth, this.canvasCont.offsetHeight);
+	// console.log(`width: ${size.width}, height: ${size.height}`);
+	size.width = Math.ceil(size.width);
+	size.height = Math.ceil(size.height);
+	// console.log(`width: ${size.width}, height: ${size.height}`);
 
 	this.canvas.style.width = size.width;
 	this.canvas.style.height = size.height;
