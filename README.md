@@ -6,4 +6,4 @@ Developed for [js13kGames 2015](http://2015.js13kgames.com/).
 
 ### [Play online!](https://costava.github.io/Parity-Ship/dist/)
 
-![Parity Ship](http://i.imgur.com/oWbPmZv.png)
+![Parity Ship](http://i.imgur.com/Eoga9M6.png)
