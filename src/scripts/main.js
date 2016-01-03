@@ -27,12 +27,37 @@ var game = new Game();
 function loop() {
 	game.newTime = new Date().getTime();
 	game.dt = game.newTime - game.oldTime;
+	game.gameTime += game.dt;
+
+	// check if should complete new tasks
+	game.tasks.forEach(function(task) {
+		if (game.gameTime >= task.time) {
+			// complete task
+			task.callback();
+
+			// remove completed task from task array
+			game.tasks.splice(game.tasks.indexOf(task), 1);
+		}
+	});
+	// console.log(`Tasks left: ${game.tasks.length}`);
+
+	// console.log(`minShipSpeed: ${game.minShipSpeed} maxShipSpeed: ${game.maxShipSpeed} newShipInterval: ${game.newShipInterval}`);
+
+	// console.log(`Ships: ${game.ships.length}`);
+	// console.log(`CleanPackets: ${game.cleanPackets.length}`);
+	// console.log(`ColorChangers: ${game.colorChangers.length}`);
+	// console.log(`FadeBars: ${game.fadeBars.length}`);
+	// console.log(`Planets: ${game.planets.length}`);
 
 	// check if should make new ship
-	if (game.newTime - game.newShipTime > game.newShipInterval) {
+	if (game.gameTime - game.newShipTime > game.newShipInterval) {
 		// make new ship
 		var x = Math.random() * (3+game.maxShipRadius) + 100;
-		var y = Math.random() * game.maxY();
+
+		var ymin = Math.max(0 - game.minShipRadius, game.player.pos.y - (game.maxY() * 0.7));
+		var ymax = Math.min(game.maxY() + game.minShipRadius, game.player.pos.y + (game.maxY() * 0.7));
+
+		var y = Math.random() * (ymax - ymin) + ymin;
 
 		var radius = Util.randomInInterval(game.minShipRadius, game.maxShipRadius);
 		var sideLength = Util.randomInInterval(0.3, 1.2) * radius;
@@ -44,11 +69,11 @@ function loop() {
 
 		game.ships.push(ship);
 
-		game.newShipTime = game.newTime;
+		game.newShipTime = game.gameTime;
 	}
 
 	// check if should make new planet
-	if (game.newTime - game.newPlanetTime > game.newPlanetInterval) {
+	if (game.gameTime - game.newPlanetTime > game.newPlanetInterval) {
 		// make a new planet
 		var x = Math.random() * (3+game.maxPlanetLength) + 100;
 		var y = Math.random() * game.maxY();
@@ -61,21 +86,21 @@ function loop() {
 		color.g *= mult;
 		color.b *= mult;
 
-		var speed = 0.010 * sideLength;
+		var speed = 0.001 * sideLength;
 		speed *= -1;// so that planet goes to left
 
 		var planet = new Planet({x: x, y: y}, sideLength, color, {x: speed, y: 0});
 
 		game.planets.push(planet);
 
-		game.newPlanetTime = game.newTime;
+		game.newPlanetTime = game.gameTime;
 	}
 
 	// move player
 	game.player.move(game.dt);
 
 	if (game.mousedown) {
-		game.tryShoot({x: game.player.pos.x, y: game.player.pos.y}, game.newTime);
+		game.tryShoot({x: game.player.pos.x, y: game.player.pos.y});
 	}
 
 	// move planets
@@ -108,15 +133,22 @@ function loop() {
 	// remove ships out of bounds
 	game.ships.forEach(function(ship) {
 		// if ship is left of screen or (ship is right and screen and has been hit)
-		if (ship.pos.x < 0 || (ship.pos.x > 100 && ship.hits > 0)) {
+		if (ship.pos.x < 0 || (ship.pos.x > 100 && ship.hit)) {
 			game.ships.splice(game.ships.indexOf(ship), 1);
 		}
 	});
 
 	// remove planets out of bounds
 	game.planets.forEach(function(planet) {
-		if (planet.pos.x < 0){
+		if (planet.pos.x < 0 - planet.sideLength){
 			game.planets.splice(game.planets.indexOf(planet), 1);
+		}
+	});
+
+	// remove clean packets out of bounds
+	game.cleanPackets.forEach(function(packet) {
+		if (packet.pos.x > 100){
+			game.cleanPackets.splice(game.cleanPackets.indexOf(packet), 1);
 		}
 	});
 
@@ -143,11 +175,13 @@ function loop() {
 						// packet fades away
 						var cc = new ColorChanger(packet.color.clone(), new Color(0, 0, 0, 0), game.cpFadeTime, packet);
 
-						cc.callback = function() {
-							game.colorChangers.splice(game.colorChangers.indexOf(this), 1);
+						cc.callback = (function(ccKill, packetKill) {
+							return function() {
+								game.colorChangers.splice(game.colorChangers.indexOf(ccKill), 1);
 
-							game.cleanPackets.splice(game.cleanPackets.indexOf(packet), 1);
-						};
+								game.cleanPackets.splice(game.cleanPackets.indexOf(packetKill), 1);
+							}
+						})(cc, packet);
 
 						game.colorChangers.push(cc);
 
@@ -162,11 +196,13 @@ function loop() {
 						// fadeBar fades
 						var ccFadeBar = new ColorChanger(ship.innerColor.clone(), fFinalColor, game.fadeBarTime, f);
 
-						ccFadeBar.callback = function() {
-							game.colorChangers.splice(game.colorChangers.indexOf(this), 1);
+						ccFadeBar.callback = (function(ccKill, fbKill) {
+							return function() {
+								game.colorChangers.splice(game.colorChangers.indexOf(ccKill), 1);
 
-							game.fadeBars.splice(game.fadeBars.indexOf(this.target), 1);
-						};
+								game.fadeBars.splice(game.fadeBars.indexOf(fbKill), 1);
+							}
+						})(ccFadeBar, f);
 
 						game.fadeBars.push(f);
 						game.colorChangers.push(ccFadeBar);
@@ -174,9 +210,11 @@ function loop() {
 						// player changes color;
 						var ccPlayer = new ColorChanger(game.player.color.clone(), ship.innerColor.clone(), game.fadeBarTime, game.player);
 
-						ccPlayer.callback = function() {
-							game.colorChangers.splice(game.colorChangers.indexOf(this), 1);
-						};
+						ccPlayer.callback = (function(ccKill) {
+							return function() {
+								game.colorChangers.splice(game.colorChangers.indexOf(ccKill), 1);
+							}
+						})(ccPlayer);
 
 						game.colorChangers.push(ccPlayer);
 
@@ -196,7 +234,7 @@ function loop() {
 
 		if (distance < colDistance) {
 			// game over
-			console.log('Game over!');
+			// console.log('Game over!');
 
 			game.endGameCleanUp();
 
