@@ -1,6 +1,7 @@
 var Util = require('./Util.js');
 var Player = require('./Player.js');
 var CleanPacket = require('./CleanPacket.js');
+var Vector2 = require('./Vector2.js');
 
 function Game() {
 	this.aspectRatioWidth = 16;
@@ -11,11 +12,14 @@ function Game() {
 	this.menuShowDuration = '0.5s';
 	this.menuHideDuration = '0.2s';
 
-	this.shootInterval = 300;// min time between shots in milliseconds
+	this.shootInterval = 200;// min time between shots in milliseconds
 	this.shootTime = 0;
 	this.shootIntervalCurrent = 0;
 
-	this.newShipInterval = 95;// time between new ship spawned in milliseconds
+	// angle (in radians) between center packet and a side packet
+	this.shootSideAngle = Math.PI / 8;
+
+	this.newShipInterval = 40;// time between new ship spawned in milliseconds
 	this.newShipTime = 0;
 	this.newShipIntervalCurrent = 0;
 
@@ -187,9 +191,15 @@ Game.prototype.isVhPosOnCanvas = function(pos) {
 
 Game.prototype.tryShoot = function(pos, currentTime) {
 	if (currentTime - this.shootTime > this.shootInterval) {
-		var packet = new CleanPacket(pos);
+		var newPackets = [];
+		for (var i = 0; i < 3; i++) {
+			newPackets.push(new CleanPacket({x: pos.x, y: pos.y}));
+		}
 
-		this.cleanPackets.push(packet);
+		newPackets[1].speed = Vector2.rotate(newPackets[1].speed, this.shootSideAngle);
+		newPackets[2].speed = Vector2.rotate(newPackets[2].speed, -this.shootSideAngle);
+
+		this.cleanPackets = this.cleanPackets.concat(newPackets);
 
 		this.shootTime = currentTime;
 	}

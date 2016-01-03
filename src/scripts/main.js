@@ -99,8 +99,10 @@ function loop() {
 	// move clean packets
 	game.cleanPackets.forEach(function(packet) {
 		var dx = packet.speed.x * game.dt;
+		var dy = packet.speed.y * game.dt;
 
 		packet.pos.x += dx;
+		packet.pos.y += dy;
 	});
 
 	// remove ships out of bounds
