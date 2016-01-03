@@ -80,8 +80,48 @@ html, body, .game-container, .canvas-container {
 	align-items: center;
 }
 
-.menu > * {
+.about-menu > * {
 	margin: 8px 0 8px 0;
+}
+
+.main-name {
+	margin-top: 12vh;
+	margin-right: 0;
+	margin-bottom: 12vh;
+	margin-left: 0;
+
+	font-size: 24vh;
+}
+
+.main-name, .name, .end-name, .button-bar, .pause-score-wrapper {
+	text-align: center;
+}
+
+.main-button, .about-button, .pause-button, .end-button {
+	border-style: solid;
+	border-color: rgba(255, 255, 255, 1);
+
+	color: inherit;
+}
+
+.main-button {
+	margin: 0;
+
+	border-width: 1vh;
+	padding: 2vh;
+
+	font-size: 10vh;
+}
+
+.main-button, .pause-button, .end-button {
+	background-color: rgba(0, 0, 0, 0.2);
+
+	transition-property: background-color;
+	transition-duration: 0.2s;
+}
+
+.main-button:hover, .pause-button:hover, .end-button:hover {
+	background-color: rgba(0, 0, 0, 0.4);
 }
 
 .about-info {
@@ -92,39 +132,8 @@ html, body, .game-container, .canvas-container {
 	padding: 0 10px 0 10px;
 }
 
-.main-name {
-	margin-top: 10vh;
-	margin-bottom: 10vh;
-	font-size: 20vh;
-}
-
-.button-bar .main-button {
-	font-size: 10vh;
-
-	background-color: rgba(0, 0, 0, 0.2);
-}
-
-.button-bar .main-button:hover {
-	padding: 2px;
-	border-width: 4px;
-
-	background-color: rgba(0, 0, 0, 0.4);
-}
-
-.button-bar button {
-	transition-property: all;
-	transition-duration: 0.2s;
-
-	font-size: 14px;
-
-	background-color: rgba(0, 0, 0, 0.1);
-	border: 2px solid white;
-	padding: 8px;
-	color: inherit;
-}
-
-.button-bar button:hover {
-	background-color: rgba(0, 0, 0, 0.2);
+.info-list > li {
+	margin: 2px 0 2px 0;
 }
 
 .score-list, .info-list {
@@ -134,54 +143,104 @@ html, body, .game-container, .canvas-container {
 	list-style-type: none;
 }
 
+.about-button {
+	font-size: 14px;
+
+	border-width: 2px;
+	padding: 8px;
+
+	transition-property: background-color;
+	transition-duration: 0.2s;
+
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+.about-button:hover {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+.pause-name {
+	margin: 10vh 0 10vh 0;
+
+	font-size: 20vh;
+}
+
+.pause-score-wrapper {
+	margin: 0 0 10vh 0;
+
+	font-size: 6vh;
+}
+
+.pause-button {
+	border-width: 1vh;
+
+	padding: 2vh;
+
+	font-size: 6vh;
+}
+
+.end-name {
+	margin: 8vh 0 8vh 0;
+
+	font-size: 20vh;
+}
+
 .score-list {
+	margin: 0 0 8vh 0;
+
+	font-size: 6vh;
+
 	text-align: center;
 }
 
-.info-list > li {
-	margin: 2px 0 2px 0;
+.end-button {
+	border-width: 1vh;
+
+	padding: 2vh;
+
+	font-size: 6vh;
 }
 
 /* ////////////////////////////// */
 
 @media (max-height: 300px) {
-	.game-container {
+	.about-menu {
 		font-size: 10px;
 	}
 
-	.menu:not(.js-main-menu) > * {
+	.about-menu > * {
 		margin: 2px 0 2px 0;
 	}
 
-	.button-bar button {
+	.about-button {
 		font-size: 10px;
 	}
 }
 
 @media (min-height: 300px) and (max-height: 350px) {
-	.game-container {
+	.about-menu {
 		font-size: 12px;
 	}
 
-	.menu:not(.js-main-menu) > * {
+	.about-menu > * {
 		margin: 4px 0 4px 0;
 	}
 
-	.button-bar button {
+	.about-button {
 		font-size: 10px;
 	}
 }
 
 @media (min-height: 350px) and (max-height: 450px) {
-	.game-container {
+	.about-menu {
 		font-size: 14px;
 	}
 
-	.menu:not(.js-main-menu) > * {
+	.about-menu > * {
 		margin: 6px 0 6px 0;
 	}
 
-	.button-bar button {
+	.about-button {
 		font-size: 12px;
 	}
 }

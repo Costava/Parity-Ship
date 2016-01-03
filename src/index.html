@@ -12,7 +12,7 @@
 		<div class="game-container">
 			<div class="canvas-container js-canvas-container"></div>
 
-			<div class="menu js-main-menu">
+			<div class="menu main-menu js-main-menu">
 				<h1 class="main-name">Parity Ship</h1>
 
 				<nav class="button-bar">
@@ -21,11 +21,11 @@
 				</nav>
 			</div>
 
-			<div class="menu js-about-menu">
-				<h1 class="name">Parity Ship</h1>
+			<div class="menu about-menu js-about-menu">
+				<h1>Parity Ship</h1>
 
 				<p class="about-info info-paragraph">
-					Strong interference is blocking communications in this area, and the ships in your fleet are headed in the wrong direction! Your ship is the only one fitted with the old school equipment capable of transmitting cleanly through this kind of interference. Guide your ship with the mouse to avoid colliding with the fleet. Left click to transmit a data packet. Hold to auto-transmit. Right click to pause/resume. Inform as many ships to turn around as you can.
+					Strong interference is blocking communications in this area, and the ships in your fleet are headed in the wrong direction! Your ship is the only one fitted with the old school equipment capable of transmitting cleanly through this kind of interference. Guide your ship with the mouse to avoid colliding with the fleet. Left click to transmit data packets. Hold to auto-transmit. Right click to pause/resume. Inform as many ships to turn around as you can.
 				</p>
 
 				<p class="about-info">
@@ -36,30 +36,30 @@
 
 				<ul class="info-list">
 					<li>Author: <a href="https://github.com/Costava" target="_blank">Costava</a></li>
-					<li>Version: 1.1.3</li>
+					<li>Version: 1.2.0</li>
 					<li><a href="https://github.com/Costava/Parity-Ship" target="_blank">View source on GitHub</a></li>
 				</ul>
 
 				<nav class="button-bar">
-					<button class="js-back-button js-menu-button">Back</button>
+					<button class="about-button js-back-button js-menu-button">Back</button>
 				</nav>
 			</div>
 
-			<div class="menu js-pause-menu">
-				<h1 class="name">Parity Ship</h1>
+			<div class="menu pause-menu js-pause-menu">
+				<h1 class="pause-name">Paused</h1>
 
-				<div>
+				<div class="pause-score-wrapper">
 					Ships Informed:&nbsp;<span class="js-pause-score">0</span>
 				</div>
 
 				<nav class="button-bar">
-					<button class="js-resume-button js-menu-button">Resume</button>
-					<button class="js-quit-button js-menu-button">Quit</button>
+					<button class="pause-button js-resume-button js-menu-button">Resume</button>
+					<button class="pause-button js-quit-button js-menu-button">Quit</button>
 				</nav>
 			</div>
 
-			<div class="menu js-end-menu">
-				<h1 class="name">Parity Ship</h1>
+			<div class="menu end-menu js-end-menu">
+				<h1 class="end-name">Crashed!</h1>
 
 				<ul class="score-list">
 					<li>
@@ -72,8 +72,8 @@
 				</ul>
 
 				<nav class="button-bar">
-					<button class="js-again-button js-menu-button">Play Again</button>
-					<button class="js-return-button js-menu-button">Return to Main Menu</button>
+					<button class="end-button js-again-button js-menu-button">Play Again</button>
+					<button class="end-button js-return-button js-menu-button">Return to Main Menu</button>
 				</nav>
 			</div>
 		</div><!-- End of game-container -->
