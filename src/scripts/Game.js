@@ -1,6 +1,8 @@
 var Util = require('./Util.js');
 var Player = require('./Player.js');
 var CleanPacket = require('./CleanPacket.js');
+var Vector2 = require('./Vector2.js');
+var Task = require('./Task.js');
 
 function Game() {
 	this.aspectRatioWidth = 16;
@@ -11,35 +13,55 @@ function Game() {
 	this.menuShowDuration = '0.5s';
 	this.menuHideDuration = '0.2s';
 
-	this.shootInterval = 300;// min time between shots in milliseconds
-	this.shootTime = 0;
-	this.shootIntervalCurrent = 0;
+	this.sideShootInterval = 200;// min time between shots in milliseconds
+	this.sideShootTime = 0;
 
-	this.newShipInterval = 95;// time between new ship spawned in milliseconds
+	this.centerShootInterval = 400;// milliseconds
+	this.centerShootTime = 0;
+
+	// angle (in radians) between center packet and a side packet
+	this.shootSideAngle = Math.PI / 7;
+
+	this.newShipIntervalInitial = 400;
+	this.newShipIntervalFinal = 46;
+	this.newShipInterval = this.newShipIntervalInitial;// time between new ship spawned in milliseconds
 	this.newShipTime = 0;
-	this.newShipIntervalCurrent = 0;
+
+	this.newShipIntervalDiff = 50;
+	// time between changing newShipInterval
+	this.newShipIncrementInterval = 4000;// milliseconds
 
 	this.fadeBarTime = 800;
 	this.cpFadeTime = 300;
 
-	this.minShipSpeed = 0.060;
-	this.maxShipSpeed = 0.102;
+	// min- and maxShipSpeed will be changed as game progresses
+	this.minShipSpeed = 0.030;
+	this.maxShipSpeed = 0.090;
+	// lowest and highest possible speed of other ships
+	this.shipBotSpeed = this.minShipSpeed;
 	this.shipTopSpeed = this.maxShipSpeed;
-	// max ship speed will be lowered at start of game and raised back up
-	// to shipTopSpeed in increments over time
+
+	// interval to put between min- and maxShipSpeed as increment over time
+	this.speedInterval = 0.010;
+	// time between difficulty increases
+	this.speedIncrementInterval = 4000;// milliseconds
 
 	this.minShipRadius = 2;
 	this.maxShipRadius = 5;
 
-	this.newPlanetInterval = 80;
+	this.newPlanetInterval = 300;
 	this.newPlanetTime = 0;
 
-	this.minPlanetLength = 1;
-	this.maxPlanetLength = 6;
+	this.minPlanetLength = 3;
+	this.maxPlanetLength = 15;
 
 	this.highScore = 0;
 
-	this.shipSpeedStepUps = [];
+	this.tasks = [];
+
+	this.oldTime = 0;
+	this.newTime = 0;
+	this.gameTime = 0;
 
 	// game container's background color for different situations
 	this.playBackgroundColor = 'rgba(91, 112, 179, 1)';
@@ -185,13 +207,26 @@ Game.prototype.isVhPosOnCanvas = function(pos) {
 	return false;
 };
 
-Game.prototype.tryShoot = function(pos, currentTime) {
-	if (currentTime - this.shootTime > this.shootInterval) {
-		var packet = new CleanPacket(pos);
+Game.prototype.tryShoot = function(pos) {
+	if (this.gameTime - this.sideShootTime >= this.sideShootInterval) {
+		var packet1 = new CleanPacket({x: pos.x, y: pos.y});
+		var packet2 = new CleanPacket({x: pos.x, y: pos.y});
 
-		this.cleanPackets.push(packet);
+		packet1.speed = Vector2.rotate(packet1.speed, this.shootSideAngle);
+		packet2.speed = Vector2.rotate(packet2.speed, -this.shootSideAngle);
 
-		this.shootTime = currentTime;
+		this.cleanPackets.push(packet1);
+		this.cleanPackets.push(packet2);
+
+		this.sideShootTime = this.gameTime;
+	}
+
+	if (this.gameTime - this.centerShootTime >= this.centerShootInterval) {
+		var packet3 = new CleanPacket({x: pos.x, y: pos.y});
+
+		this.cleanPackets.push(packet3);
+
+		this.centerShootTime = this.gameTime;
 	}
 };
 
@@ -226,6 +261,8 @@ Game.prototype.draw = function() {
 };
 
 Game.prototype.startGame = function() {
+	console.log("Game start");
+
 	this.paused = false;
 	this.resuming = false;
 	this.inProgress = true;
@@ -243,15 +280,11 @@ Game.prototype.startGame = function() {
 	this.colorChangers = [];
 	this.fadeBars = [];
 	this.planets = [];
+	this.tasks = [];
 
 	// check if planets should have shadow
 	this.blurCheckbox = document.querySelector('.js-planet-blur');
 	this.planetBlur = this.blurCheckbox.checked;
-
-	this.shipSpeedStepUps = [];
-	// ^ array of setTimeouts that will ramp up maxShipSpeed.
-	//   A list of these must be kept so that they can be stopped if
-	//   game ends before all have happened
 
 	this.score = 0;
 
@@ -260,6 +293,10 @@ Game.prototype.startGame = function() {
 	this.canvasCont = document.querySelector('.js-canvas-container');
 
 	var size = Util.maxChildSize(this.aspectRatio(), this.canvasCont.offsetWidth, this.canvasCont.offsetHeight);
+	// console.log(`width: ${size.width}, height: ${size.height}`);
+	size.width = Math.ceil(size.width);
+	size.height = Math.ceil(size.height);
+	// console.log(`width: ${size.width}, height: ${size.height}`);
 
 	this.canvas.style.width = size.width;
 	this.canvas.style.height = size.height;
@@ -274,44 +311,76 @@ Game.prototype.startGame = function() {
 
 	this.vh = this.canvas.width / 100;
 
-	//////////// Ease up max ship speed
-	var interval = 1000;// milliseconds between step ups
-	var deltaSpeed = 0.005;
-	var numIntervals = Math.floor( (this.shipTopSpeed - this.minShipSpeed) / deltaSpeed );
+	//////////// Ease up ship speed
+	var numIntervals = Math.floor( (this.shipTopSpeed - this.shipBotSpeed) / this.speedInterval );
 
-	this.maxShipSpeed = this.shipTopSpeed - (numIntervals * deltaSpeed);
+	this.minShipSpeed = this.shipBotSpeed;
+	this.maxShipSpeed = this.minShipSpeed + this.speedInterval;
 
-	var to;
-	// numIntervals-1 because the final interval will set game.maxShipSpeed t0 game.shipTopSpeed
-	for (var i = 0; i < numIntervals-1; i++) {
-		(function (game) {
-			to = window.setTimeout(function() {
-				game.maxShipSpeed += deltaSpeed;
+	for (var i = 0; i < numIntervals; i++) {
+		var time = (i + 1) * this.speedIncrementInterval;
+		var callback = (function(n) {
+			return function() {
+				this.minShipSpeed = this.shipBotSpeed + (n + 1) * this.speedInterval;
+				this.maxShipSpeed = this.minShipSpeed + this.speedInterval;
+			};
+		})(i).bind(this);
 
-			}, (i+1) * interval);
-		})(this);
+		var task = new Task(time, callback);
 
-		this.shipSpeedStepUps.push(to);
-		// ^ these will be cleared when game ends in case
-		//   game ended before all steps done
+		this.tasks.push(task);
 	}
 
-	(function(game) {
-		to = window.setTimeout(function() {
-			game.maxShipSpeed = game.shipTopSpeed;
-		}, numIntervals * interval);
-	})(this);
+	var time = (numIntervals + 1) * this.speedIncrementInterval;
+	var callback = function() {
+		this.maxShipSpeed = this.shipTopSpeed;
+		this.minShipSpeed = this.maxShipSpeed - this.speedInterval;
+	}.bind(this);
 
-	this.shipSpeedStepUps.push(to);
+	var task = new Task(time, callback);
+
+	this.tasks.push(task);
+
+	//////////
+
+	////////// Ease ship spawn speed
+	numIntervals = Math.floor( (this.newShipIntervalInitial - this.newShipIntervalFinal) / this.newShipIntervalDiff );
+
+	this.newShipInterval = this.newShipIntervalInitial;
+
+	for (var i = 0; i < numIntervals; i++) {
+		var time = (i + 1) * this.newShipIncrementInterval;
+		var callback = (function(n) {
+			return function() {
+				this.newShipInterval = this.newShipIntervalInitial - (n + 1) * this.newShipIntervalDiff;
+			};
+		})(i).bind(this);
+
+		var task = new Task(time, callback);
+
+		this.tasks.push(task);
+	}
+
+	var time = (numIntervals + 1) * this.newShipIncrementInterval;
+	var callback = function() {
+		this.newShipInterval = this.newShipIntervalFinal;
+	}.bind(this);
+
+	var task = new Task(time, callback);
+
+	this.tasks.push(task);
 
 	//////////
 
 	var currentTime = new Date().getTime();
-
-	this.newShipTime = currentTime - this.newShipInterval;
-	this.newPlanetTime = currentTime - this.newPlanetInterval;
-	this.shootTime = currentTime + 100;
 	this.oldTime = currentTime;
+	this.gameTime = 0;
+
+	this.newShipTime = this.gameTime - this.newShipInterval;
+	this.newPlanetTime = this.gameTime - this.newPlanetInterval;
+	this.sideShootTime = this.gameTime + 100;
+	this.centerShootTime = this.gameTime + 100;
+
 
 	this.bindControls(document);
 
@@ -335,12 +404,6 @@ Game.prototype.pause = function()  {
 	this.paused = true;
 	this.resuming = false;
 
-	var currentTime = new Date().getTime();
-
-	['shoot', 'newShip'].forEach(function(kind) {
-		this[kind + 'IntervalCurrent'] = currentTime - this[kind + 'Time'];
-	}.bind(this));
-
 	this.pauseAction();
 
 	document.querySelector('.js-pause-score').innerHTML = this.score;
@@ -357,10 +420,6 @@ Game.prototype.resume = function() {
 
 	setTimeout(function() {
 		var currentTime = new Date().getTime();
-
-		['shoot', 'newShip'].forEach(function(kind) {
-			this[kind + 'Time'] = currentTime - this[kind + 'IntervalCurrent'];
-		}.bind(this));
 
 		this.oldTime = currentTime;
 
@@ -383,17 +442,14 @@ Game.prototype.tryTogglePause = function() {
 };
 
 Game.prototype.endGameCleanUp = function() {
+	console.log("Game end");
+	
 	this.inProgress = false;
 	this.looping = false;
 	this.paused = false;
 	this.resuming = false;
 
 	this.unbindControls(document);
-
-	// stop ship speed step ups that are left
-	this.shipSpeedStepUps.forEach(function(step) {
-		window.clearTimeout(step);
-	});
 
 	document.querySelector('.game-container').style['background-color'] = this.menuBackgroundColor;
 };
