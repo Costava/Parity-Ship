@@ -3,7 +3,7 @@ var Color = require('./Color.js');
 function CleanPacket(pos) {
 	this.pos = pos;
 
-	this.radius = 2;
+	this.radius = 1.8;
 	this.speed = {x: 0.060, y: 0};
 	this.color = new Color(240, 70, 96, 0.9);
 
